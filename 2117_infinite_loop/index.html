@@ -11,17 +11,39 @@
     <link rel="stylesheet" href="magnific-popup/magnific-popup.css">
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/tooplate-infinite-loop.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    
 
   </head>
   
   <body>    
     <!-- Hero section -->
+
+    
     
     <section id="infinite" class="text-white tm-font-big tm-parallax">
       <!-- Navigation -->
       <nav class="navbar navbar-expand-md tm-navbar" id="tmNav">              
         <div class="container">   
           <div class="tm-next">
+
+            <button id="menu-open">&#9776;</button>
+
+            <div id="side-menu">
+              <div class="menu-header">
+                <span class="company-name">MyCompany</span>
+                <button id="menu-close">&times;</button>
+              </div>
+          
+              <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+              </ul>
+            </div>
+
               <a href="#infinite" class="navbar-brand">Academia</a>
           </div>             
             
@@ -616,5 +638,6 @@
         });
       });
     </script>
+    <script src="script.js"></script>
   </body>
 </html>
