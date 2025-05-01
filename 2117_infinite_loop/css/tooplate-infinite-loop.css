@@ -1,10 +1,4 @@
-/*
 
-Tooplate 2117 Infinite Loop
-
-https://www.tooplate.com/view/2117-infinite-loop
-
-*/
 
 @import url("https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900");
 
@@ -439,82 +433,218 @@ blockquote {
   letter-spacing: 1px;
   font-size: 68.5%;
 }
-
-/*---------------*/
-/***** Honey *****/
-/*---------------*/
-
-figure.effect-honey {
-  background: #4a3753;
-  max-width: 220px;
+/* UNESCO Gallery Section Styles */
+.unesco-gallery-section {
+  padding: 80px 0;
+  background-color: #f8f9fa;
 }
 
-figure.effect-honey img {
-  opacity: 1;
-  -webkit-transition: opacity 0.35s;
-  transition: opacity 0.35s;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
 
-figure.effect-honey:hover img {
-  opacity: 0.4;
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
 }
 
-figure.effect-honey figcaption::before {
+.section-header h2 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.section-header p {
+  font-size: 18px;
+  color: #666;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Gallery Grid Layout */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+/* Card Styling */
+.gallery-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+}
+
+.gallery-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+  height: 280px;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-card:hover .image-container img {
+  transform: scale(1.05);
+}
+
+/* Overlay Styling */
+.card-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 10px;
-  background: #38C;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 20px;
+  color: white;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .card-overlay {
+  transform: translateY(0);
+}
+
+.card-overlay h3 {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.card-overlay p {
+  font-size: 14px;
+  margin: 0 0 15px 0;
+  opacity: 0.9;
+}
+
+/* Map Button Styling */
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.map-btn:hover {
+  background-color: #2980b9;
+}
+
+.map-btn svg {
+  margin-right: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .section-header h2 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+  }
+  
+  .unesco-gallery-section {
+    padding: 60px 0;
+  }
+  
+  .section-header {
+    margin-bottom: 40px;
+  }
+  
+  .section-header h2 {
+    font-size: 28px;
+  }
+  
+  .section-header p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .image-container {
+    height: 250px;
+  }
+  
+  .unesco-gallery-section {
+    padding: 40px 0;
+  }
+}
+
+/* Image Placeholder and Loading State */
+.image-container::before {
   content: "";
-  -webkit-transform: translate3d(0, 10px, 0);
-  transform: translate3d(0, 10px, 0);
-}
-
-figure.effect-honey h2 {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  padding: 1em 1.5em;
   width: 100%;
-  text-align: left;
-  -webkit-transform: translate3d(0, -30px, 0);
-  transform: translate3d(0, -30px, 0);
+  height: 100%;
+  background-color: #f0f0f0;
+  z-index: -1;
 }
 
-figure.effect-honey h2 i {
-  font-style: normal;
-  opacity: 0;
-  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
-  transition: opacity 0.35s, transform 0.35s;
-  -webkit-transform: translate3d(0, -30px, 0);
-  transform: translate3d(0, -30px, 0);
+/* Animation for card entrance */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-figure.effect-honey figcaption::before,
-figure.effect-honey h2 {
-  -webkit-transition: -webkit-transform 0.35s;
-  transition: transform 0.35s;
+.gallery-card {
+  animation: fadeIn 0.5s ease forwards;
 }
 
-figure.effect-honey:hover figcaption::before,
-figure.effect-honey:hover h2,
-figure.effect-honey:hover h2 i {
-  opacity: 1;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-}
-
-.tm-container-gallery {
-	padding-top: 30px;
-	}
-
+.gallery-grid .gallery-card:nth-child(1) { animation-delay: 0.1s; }
+.gallery-grid .gallery-card:nth-child(2) { animation-delay: 0.2s; }
+.gallery-grid .gallery-card:nth-child(3) { animation-delay: 0.3s; }
+.gallery-grid .gallery-card:nth-child(4) { animation-delay: 0.4s; }
+.gallery-grid .gallery-card:nth-child(5) { animation-delay: 0.5s; }
+.gallery-grid .gallery-card:nth-child(6) { animation-delay: 0.6s; }
+.gallery-grid .gallery-card:nth-child(7) { animation-delay: 0.7s; }
+.gallery-grid .gallery-card:nth-child(8) { animation-delay: 0.8s; }
 /* Contact */
 
 #contact {
   color: white;
   background-color: #001828;
-  background-image: url(../img/infinite-loop-03.jpg);
+  background-image: url(../images/0100ffa2-71ec-4371-a035-f612253f3fa3.60c498c559810aa0.webp);
   background-position: center;
   background-repeat: no-repeat;
   min-height: 980px;
