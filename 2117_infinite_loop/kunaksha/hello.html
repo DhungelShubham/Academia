@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia - Kathmandu University Map</title>
+    
+    <!-- External CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+    
+    <style>
+        /* Google Font Import */
+        @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
+        
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            transition: 0.5s;
+            position: relative;
+        }
+        
+        /* Header Styles */
+        .header {
+            width: 100%;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            background-color: #f8f9fa;
+            z-index: 100;
+            transition: 0.5s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header__title {
+            color: #3a3a3a;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .header__toggle {
+            color: #3a3a3a;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Navbar Styles */
+        .l-navbar {
+            position: fixed;
+            top: 0;
+            left: -30%;
+            width: 240px;
+            height: 100vh;
+            background-color: #11101d;
+            padding: 0.5rem 1rem 0 0;
+            transition: 0.5s;
+            z-index: 101;
+        }
+        
+        .nav {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        
+        .nav__logo, .nav__link {
+            display: grid;
+            grid-template-columns: max-content max-content;
+            align-items: center;
+            column-gap: 1rem;
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            text-decoration: none;
+        }
+        
+        .nav__logo {
+            margin-bottom: 2rem;
+        }
+        
+        .nav__logo-name {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .nav__link {
+            position: relative;
+            color: #9497a3;
+            margin-bottom: 1.5rem;
+            transition: 0.3s;
+        }
+        
+        .nav__link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+        }
+        
+        .nav__icon {
+            font-size: 1.25rem;
+        }
+        
+        .nav__name {
+            font-size: 0.95rem;
+        }
+        
+        /* Show navbar */
+        .show {
+            left: 0;
+        }
+        
+        /* Add padding body when navbar is shown */
+        .body-pd {
+            padding-left: 240px;
+        }
+        
+        /* Active links */
+        .active {
+            color: #fff;
+        }
+        
+        .active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 2px;
+            height: 32px;
+            background-color: #fff;
+        }
+        
+        /* Dropdown Menu */
+        .nav__item {
+            list-style: none;
+        }
+        
+        .dropdown__menu {
+            display: none;
+            padding-left: 2rem;
+            list-style: none;
+        }
+        
+        .dropdown__menu.show {
+            display: block;
+        }
+        
+        .dropdown__item {
+            display: block;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            color: #9497a3;
+            text-decoration: none;
+            transition: 0.3s;
+            border-radius: 0.5rem;
+        }
+        
+        .dropdown__item:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Map Container Styles */
+        #container {
+            display: flex;
+            width: 100%;
+            padding-top: 70px;
+            padding-left: 20px;
+            padding-right: 20px;
+            transition: 0.5s;
+        }
+        
+        #info-panel {
+            width: 30%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-right: 20px;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
+        }
+        
+        #info-panel h2 {
+            color: #11101d;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        #info-content {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        #info-content h2 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        #info-content p {
+            margin-bottom: 10px;
+        }
+        
+        #info-content a {
+            color: #3a86ff;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+            transition: color 0.3s;
+        }
+        
+        #info-content a:hover {
+            color: #2667cc;
+        }
+        
+        #map {
+            flex: 1;
+            height: calc(100vh - 90px);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Custom Popup Styles */
+        .popup {
+            font-family: "Nunito", sans-serif;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+            padding: 5px;
+        }
+        
+        /* For smaller screens */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 0 0.8rem;
+            }
+            
+            .l-navbar {
+                left: -100%;
+                width: 70%;
+            }
+            
+            .show {
+                left: 0;
+            }
+            
+            .body-pd {
+                padding-left: 0;
+            }
+            
+            #container {
+                flex-direction: column;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            #info-panel {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+                max-height: none;
+            }
+            
+            #map {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-pd">
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__toggle">
+            <i class='bx bx-menu' id="header-toggle"></i>
+        </div>
+        <h1 class="header__title">Academia - KU Map</h1>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="l-navbar" id="nav-bar">
+        <nav class="nav">
+            <div>
+                <a href="#" class="nav__logo">
+                    <i class='bx bx-layer nav__logo-icon'></i>
+                    <span class="nav__logo-name">KU Naksha</span>
+                </a>
+                <div class="nav__list">
+                    <a href="/2117_infinite_loop/kunaksha/satellite/KU3dview.html" class="nav__link">
+                        <i class='bx bx-world'></i>
+                        <span class="nav__name">Satellite</span>
+                    </a>
+
+                    <a href="/2117_infinite_loop/kunaksha/Prabin/LIB/index.html" class="nav__link">
+                        <i class='bx bx-street-view'></i>
+                        <span class="nav__name">StreetView</span>
+                    </a>
+
+                    <li class="nav__item dropdown">
+                        <a href="#" class="nav__link" id="dropdownBtn">
+                            <i class='bx bx-building-house'></i>
+                            <span class="nav__name">Buildings</span>
+                        </a>
+                        <ul class="dropdown__menu" id="dropdownMenu">
+                            <li><a href="/2117_infinite_loop/kunaksha/Prabin/LIB/index.html" class="dropdown__item">Library</a></li>
+                            <li><a href="/2117_infinite_loop/kunaksha/Prabin/BLOCK2/index.html class="dropdown__item">Block 10</a></li>
+                        </ul>
+                    </li>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div id="container">
+        <div id="info-panel">
+            <h2>KU Map Information</h2>
+            <p id="info-content">Click on a marker to see details about Kathmandu University locations.</p>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Main JS -->
+    <script>
+        // Sidebar Toggle Function
+        document.addEventListener("DOMContentLoaded", function() {
+            // Show/hide navbar
+            const toggleBtn = document.getElementById('header-toggle');
+            const nav = document.getElementById('nav-bar');
+            const bodyPd = document.getElementById('body-pd');
+            const header = document.getElementById('header');
+            
+            toggleBtn.addEventListener('click', () => {
+                nav.classList.toggle('show');
+                toggleBtn.classList.toggle('bx-x');
+                bodyPd.classList.toggle('body-pd');
+                header.classList.toggle('body-pd');
+            });
+            
+            // Dropdown toggle
+            const dropdownBtn = document.getElementById('dropdownBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            dropdownBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            // Initialize the map and set its view to Kathmandu University
+            const map = L.map('map').setView([27.619283, 85.538440], 19);
+            
+            // Add OpenStreetMap tiles to the map
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data © OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Optional: Create a custom icon for markers
+            const customIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/3177/3177361.png',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -30]
+            });
+            
+            // Location data for markers
+            const data = {
+                KUCorner: {
+                    coords: [27.619570, 85.538588],
+                    title: "KUcorner",
+                    address: "Kathmandu University Corner",
+                    streetview: '/2117_infinite_loop/kunaksha/Prabin/KUcorner/index.html',
+                    description: "Museum of space history in Dhulikhel Address: JG9Q+RC6, Dhulikhel 45200"
+                },
+                
+                Library: {
+                    coords: [27.618968, 85.538574],
+                    title: "Library",
+                    address: "Kathmandu University Central Library",
+                    streetview: '/2117_infinite_loop/kunaksha/Prabin/LIB/index.html',
+                    description: `
+                    The Kathmandu University Central Library (KUCL) is centrally located in the university central premises and can be reached within three to five minutes from all departments and hostels.
+                    The library is housed in a three-story building with a space of about 2290 square meter. The KUCL has majority of books and journals specially related with School of Science and School of Engineering. 
+                    It monitors services of all libraries of the university.
+                    
+                    <ul>KU Central Library has:</ul>
+                    <li>60,000 Plus - Volumes of books</li>
+                    <li>2500 - CD-ROMs</li>
+                    <li>200 - Videocassettes</li>
+                    <li>125 - Journal titles and newsletters</li>
+                    <li>20 - Newspapers and Magazines</li>
+                    <li>75 - Audio cassettes</li>
+                    `
+                },
+                
+                KUMain: {
+                    coords: [27.619621, 85.538598],
+                    title: "Kathmandu University Administrative Building",
+                    address: 'Kathmandu University Main Office',
+                    streetview: '/2117_infinite_loop/kunaksha/Prabin/BLOCK2/index.html',
+                    description: `
+                    Kathmandu University
+                    <ul>
+                    <li>Address: Dhulikhel, Nepal</li>
+                    <li>Phone: 977-11-415100, 977-11-415200, 977-9801210035, 977-11-415005</li>
+                    <li>Fax: 977-11-415011 P.O Box: 6250</li>
+                    <li>Email: info@ku.edu.np</li>
+                    </ul>
+                    `
+                },
+                
+                KUBLOCK10: {
+                    coords: [27.619767, 85.538086],
+                    title: "Block 10",
+                    address: "Department of Management Informatics and Communication",
+                    streetview: '/2117_infinite_loop/kunaksha/Prabin/BLOCK2/index.html',
+                    description: `
+                    Welcome to the Department of Management Informatics and Communication!
+                    
+                    We are thrilled to have you explore the vibrant and dynamic world of Management, IT, and Business with us. 
+                    Our department is dedicated to providing cutting-edge education and fostering innovation in fields such as Management, Entrepreneurship, and Communication.
+                    `
+                },
+                
+                Cvraman: {
+                    coords: [27.619414, 85.538907],
+                    title: "C.V. Raman Auditorium",
+                    address: "C.V. Raman Auditorium & Canteen",
+                    streetview: '/2117_infinite_loop/kunaksha/Prabin/BLOCK2/index.html',
+                    description: `Best place at KU for organizing events. CV Raman has three halls Main Auditorium, Senate hall and Mini Auditorium.
+                    KU canteen is also situated in CV Raman Block`
+                }
+            };
+            
+            // Add markers to the map and bind popups
+            for (let key in data) {
+                const location = data[key];
+                
+                // Add marker
+                const marker = L.marker(location.coords, {
+                    title: location.title,
+                    icon: customIcon
+                })
+                .bindPopup(`
+                    <span class="popup">
+                    <strong>${location.title}</strong><br>
+                    ${location.address}<br>
+                    <a href="${location.streetview}" target="_blank">View in StreetView</a>
+                    </span>
+                `)
+                .addTo(map);
+                
+                // Update information panel dynamically when marker is clicked
+                marker.on("click", function () {
+                    const infoPanel = document.getElementById("info-content");
+                    infoPanel.innerHTML = `
+                        <h2>${location.title}</h2>
+                        <p><strong>Address:</strong> ${location.address}</p>
+                        <p>${location.description}</p>
+                        <a href="${location.streetview}" target="_blank">View in StreetView</a>
+                    `;
+                });
+            }
+            
+            // Set active links
+            const linkColor = document.querySelectorAll('.nav__link');
+            
+            function colorLink() {
+                if (linkColor) {
+                    linkColor.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            }
+            
+            linkColor.forEach(l => l.addEventListener('click', colorLink));
+        });
+    </script>
+</body>
+</html>
